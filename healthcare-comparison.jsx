@@ -1,0 +1,502 @@
+import { useState } from "react";
+
+const JP_RED = "#C0392B";
+const SG_BLUE = "#1D3557";
+const YELLOW = "#F4D03F";
+const GREEN = "#27AE60";
+const NEUTRAL = "#F5F0EB";
+const TEXT = "#1A1A2E";
+const MUTED = "#666688";
+const WHITE = "#FFFFFF";
+
+const styles = {
+  body: { fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif", background: NEUTRAL, color: TEXT, lineHeight: 1.7, minHeight: "100vh" },
+  hero: { background: "linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%)", color: WHITE, padding: "48px 20px 60px", textAlign: "center" },
+  heroBadge: { display: "inline-block", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 50, padding: "5px 16px", fontSize: 12, letterSpacing: 2, marginBottom: 16 },
+  heroTitle: { fontSize: "clamp(20px,5vw,40px)", fontWeight: 900, lineHeight: 1.2, marginBottom: 8 },
+  heroSub: { fontSize: "clamp(15px,3vw,22px)", fontWeight: 900, marginTop: 8 },
+  heroP: { fontSize: 13, color: "rgba(255,255,255,0.7)", maxWidth: 500, margin: "12px auto 0", lineHeight: 1.8 },
+  flags: { display: "flex", justifyContent: "center", gap: 40, marginTop: 28 },
+  flagCircle: { width: 64, height: 64, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, boxShadow: "0 8px 24px rgba(0,0,0,0.3)", border: "3px solid rgba(255,255,255,0.2)" },
+  flagLabel: { fontSize: 11, fontWeight: 700, letterSpacing: 1, color: "rgba(255,255,255,0.8)", marginTop: 6 },
+
+  nav: { position: "sticky", top: 0, background: "rgba(26,26,46,0.96)", backdropFilter: "blur(10px)", zIndex: 100, padding: "8px 12px", display: "flex", gap: 6, overflowX: "auto" },
+  navBtn: (active) => ({ flexShrink: 0, background: active ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)", color: WHITE, padding: "5px 12px", borderRadius: 50, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" }),
+
+  section: { padding: "44px 0 32px" },
+  container: { maxWidth: 860, margin: "0 auto", padding: "0 16px" },
+  sectionTitle: { display: "flex", alignItems: "center", gap: 10, fontWeight: 900, fontSize: 20, marginBottom: 6 },
+  sectionIcon: (bg) => ({ width: 34, height: 34, background: bg || TEXT, color: WHITE, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }),
+  sectionSub: { fontSize: 13, color: MUTED, marginBottom: 24, paddingLeft: 44 },
+  divider: { height: 3, background: `linear-gradient(90deg, ${JP_RED}, ${YELLOW}, ${SG_BLUE})`, borderRadius: 3, margin: "36px 0", opacity: 0.25 },
+
+  introCard: (color) => ({ background: WHITE, borderRadius: 16, padding: "22px 20px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", borderLeft: `5px solid ${color || GREEN}`, marginBottom: 24 }),
+  introCardTitle: (color) => ({ fontSize: 14, fontWeight: 700, color: color || GREEN, marginBottom: 8 }),
+
+  twoCol: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 },
+  card: (accent) => ({ background: WHITE, borderRadius: 16, padding: "20px 18px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", borderTop: `4px solid ${accent}`, position: "relative" }),
+  countryTag: (bg, color) => ({ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "3px 10px", borderRadius: 50, background: bg, color: color, marginBottom: 10 }),
+  bigNum: (color) => ({ fontFamily: "'Bebas Neue', serif", fontSize: 48, lineHeight: 1, color: color, margin: "6px 0 2px" }),
+  numLabel: { fontSize: 11, color: MUTED },
+
+  flowWrap: { background: WHITE, borderRadius: 16, padding: "24px 16px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", marginBottom: 14 },
+  flowTitle: { textAlign: "center", fontWeight: 700, fontSize: 14, marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
+  badge: (bg, color) => ({ padding: "3px 10px", borderRadius: 50, fontSize: 11, fontWeight: 700, background: bg, color: color }),
+  flowDiagram: { display: "flex", flexDirection: "column", alignItems: "center", gap: 0 },
+  flowBox: (bg, border, color, dashed) => ({ borderRadius: 10, padding: "10px 16px", textAlign: "center", fontSize: 12, fontWeight: 600, minWidth: 200, maxWidth: 280, width: "100%", background: bg, border: `2px ${dashed ? "dashed" : "solid"} ${border}`, color: color, lineHeight: 1.5 }),
+  flowNote: { fontSize: 10, color: MUTED, textAlign: "center", marginTop: 3, fontWeight: 400 },
+  arrow: { display: "flex", flexDirection: "column", alignItems: "center", padding: "4px 0" },
+
+  threeCol: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, margin: "14px 0" },
+  mBox: (bg, border) => ({ borderRadius: 12, padding: "14px 12px", textAlign: "center", background: bg, border: `2px solid ${border}` }),
+  mBoxIcon: { fontSize: 26, marginBottom: 4 },
+  mBoxTitle: { fontSize: 12, fontWeight: 700, marginBottom: 4 },
+  mBoxP: { fontSize: 11, color: MUTED, lineHeight: 1.6 },
+
+  table: { width: "100%", borderCollapse: "collapse", background: WHITE, borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", fontSize: 12 },
+  thGray: { padding: "12px 10px", fontWeight: 700, background: "#F8F9FA", color: MUTED, textAlign: "left", fontSize: 11 },
+  thJp: { padding: "12px 10px", fontWeight: 700, background: "#FDECEA", color: JP_RED, textAlign: "center", fontSize: 11 },
+  thSg: { padding: "12px 10px", fontWeight: 700, background: "#E8F0FE", color: SG_BLUE, textAlign: "center", fontSize: 11 },
+  td: (even) => ({ padding: "11px 10px", borderTop: "1px solid #F0F0F0", background: even ? "#FAFAFA" : WHITE, verticalAlign: "top" }),
+  pill: (bg, color) => ({ display: "inline-block", padding: "2px 8px", borderRadius: 50, fontSize: 10, fontWeight: 700, background: bg, color: color }),
+
+  pointGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12, marginTop: 14 },
+  pointCard: (top) => ({ background: WHITE, borderRadius: 14, padding: "18px 16px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", borderTop: `4px solid ${top}`, display: "flex", flexDirection: "column", gap: 6 }),
+  pointEmoji: { fontSize: 24 },
+  pointH: { fontSize: 13, fontWeight: 700 },
+  pointP: { fontSize: 11, color: MUTED, lineHeight: 1.7 },
+
+  quizWrap: { background: "linear-gradient(135deg, #1A1A2E, #0F3460)", borderRadius: 16, padding: "28px 20px", color: WHITE, marginBottom: 14 },
+  quizH: { fontWeight: 900, fontSize: 17, marginBottom: 8 },
+  quizQ: { fontSize: 14, margin: "16px 0", lineHeight: 1.7, background: "rgba(255,255,255,0.08)", borderRadius: 10, padding: "14px" },
+  quizBtn: (state) => ({ width: "100%", background: state === "correct" ? GREEN : state === "wrong" ? JP_RED : "rgba(255,255,255,0.1)", border: `2px solid ${state === "correct" ? GREEN : state === "wrong" ? JP_RED : "rgba(255,255,255,0.2)"}`, color: WHITE, padding: "11px 16px", borderRadius: 10, fontSize: 13, cursor: state ? "default" : "pointer", textAlign: "left", marginBottom: 8, fontFamily: "inherit", lineHeight: 1.5 }),
+  quizResult: (ok) => ({ fontSize: 13, padding: "12px", borderRadius: 10, marginTop: 6, lineHeight: 1.7, background: ok ? "rgba(39,174,96,0.25)" : "rgba(192,57,43,0.25)", border: `1px solid ${ok ? GREEN : JP_RED}` }),
+
+  summaryBox: { background: "linear-gradient(135deg, #F0FFF4, #EBF5FB)", borderRadius: 16, padding: "24px 20px", border: "2px solid #D5F5E3", marginTop: 16 },
+  summaryH: { fontWeight: 900, fontSize: 17, marginBottom: 14 },
+  summaryLi: { fontSize: 13, display: "flex", gap: 10, alignItems: "flex-start", lineHeight: 1.7, marginBottom: 10 },
+  bullet: (bg, color) => ({ flexShrink: 0, width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, background: bg, color: color, marginTop: 2 }),
+
+  footer: { background: "#1A1A2E", color: "rgba(255,255,255,0.45)", textAlign: "center", padding: "24px 16px", fontSize: 11, lineHeight: 1.8 },
+  highlight: { background: YELLOW, borderRadius: 4, padding: "1px 5px", fontWeight: 700, color: "#333" },
+};
+
+const FlowArrow = () => (
+  <div style={styles.arrow}>
+    <div style={{ width: 2, height: 16, background: "#BDC3C7" }} />
+    <div style={{ color: "#BDC3C7", fontSize: 11 }}>▼</div>
+  </div>
+);
+
+const quizData = [
+  {
+    emoji: "🏥", title: "クイズ ①",
+    q: "日本の「高額療養費制度」とはどんな制度でしょうか？",
+    options: [
+      { text: "① 収入が低い人は医療費を全額免除してもらえる制度", correct: false },
+      { text: "② 1か月の医療費の自己負担が一定の上限を超えたら払い戻してもらえる制度", correct: true },
+      { text: "③ 高齢者だけが使える特別な制度", correct: false },
+    ],
+    explanation: (ok) => ok
+      ? "✅ 正解！ 高額療養費制度は1か月の自己負担が上限を超えた分を払い戻してもらえる制度です。大病でも経済的に破綻しないための重要な仕組みです。"
+      : "❌ 正解は②です。収入に関係なく、1か月の自己負担が上限を超えた部分を後で払い戻してもらえる制度です。",
+  },
+  {
+    emoji: "🇸🇬", title: "クイズ ②",
+    q: "シンガポールのMediSave（メディセーブ）はどんな仕組みでしょうか？",
+    options: [
+      { text: "① 国がすべての国民に毎年配る医療費補助金", correct: false },
+      { text: "② 民間の保険会社が売っている任意加入の保険", correct: false },
+      { text: "③ 給料の一部を医療費のために強制的に個人口座に積み立てる制度", correct: true },
+    ],
+    explanation: (ok) => ok
+      ? "✅ 正解！ MediSaveは給料の約9〜10.5%が自動的に個人口座に積み立てられる「強制貯蓄」です。自分の入院・手術費などに使えます。"
+      : "❌ 正解は③です。給料から自動で積み立てられる個人の医療費貯蓄口座です。",
+  },
+  {
+    emoji: "⚖️", title: "クイズ ③",
+    q: "シンガポールの公立病院の「等級制度」では、どの等級が最も政府補助が大きい？",
+    options: [
+      { text: "① Class A（個室・快適な設備）", correct: false },
+      { text: "② Class B1（4人部屋）", correct: false },
+      { text: "③ Class C（大部屋・8人以上）", correct: true },
+    ],
+    explanation: (ok) => ok
+      ? "✅ 正解！ Class C（大部屋）では最大約80%もの政府補助が受けられます。快適さを犠牲にする代わりに大きな支援を受けられる仕組みです。"
+      : "❌ 正解は③のClass Cです。大部屋を選ぶほど政府補助が大きくなります。",
+  },
+];
+
+function Quiz({ data }) {
+  const [selected, setSelected] = useState(null);
+  const answered = selected !== null;
+  return (
+    <div style={styles.quizWrap}>
+      <div style={styles.quizH}>{data.emoji} {data.title}</div>
+      <div style={styles.quizQ}>{data.q}</div>
+      {data.options.map((o, i) => (
+        <button key={i} disabled={answered} style={styles.quizBtn(answered ? (i === selected ? (o.correct ? "correct" : "wrong") : (o.correct ? "correct" : null)) : null)}
+          onClick={() => setSelected(i)}>
+          {o.text}
+        </button>
+      ))}
+      {answered && (
+        <div style={styles.quizResult(data.options[selected].correct)}>
+          {data.explanation(data.options[selected].correct)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const sections = ["intro", "japan", "sg", "compare", "merit", "quiz", "summary"];
+const navLabels = ["📖 基礎知識", "🇯🇵 日本", "🇸🇬 シンガポール", "⚖️ 比較表", "✅ メリット", "🧠 クイズ", "📝 まとめ"];
+
+export default function App() {
+  const [activeNav, setActiveNav] = useState(0);
+
+  const scrollTo = (id, idx) => {
+    setActiveNav(idx);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <div style={styles.body}>
+      {/* HERO */}
+      <div style={styles.hero}>
+        <div style={styles.heroBadge}>🏥 社会保障制度 比較シリーズ #01</div>
+        <div style={styles.heroTitle}>
+          <span style={{ color: "#FF6B6B" }}>🇯🇵 日本</span>
+          <span style={{ fontFamily: "serif", fontSize: "1.4em", color: YELLOW, margin: "0 8px" }}>VS</span>
+          <span style={{ color: "#74B9FF" }}>🇸🇬 シンガポール</span>
+        </div>
+        <div style={styles.heroSub}>公的医療保険制度の徹底比較</div>
+        <p style={styles.heroP}>「病気になったとき、お金はどうなる？」<br />2つの国の仕組みをわかりやすく解説します。</p>
+        <div style={styles.flags}>
+          {[
+            { bg: "linear-gradient(135deg,#C0392B,#E74C3C)", flag: "🇯🇵", label: "JAPAN" },
+            { bg: "linear-gradient(135deg,#1D3557,#457B9D)", flag: "🇸🇬", label: "SINGAPORE" },
+          ].map((f, i) => (
+            <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ ...styles.flagCircle, background: f.bg }}>{f.flag}</div>
+              <div style={styles.flagLabel}>{f.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* NAV */}
+      <nav style={styles.nav}>
+        {navLabels.map((l, i) => (
+          <button key={i} style={styles.navBtn(activeNav === i)} onClick={() => scrollTo(sections[i], i)}>{l}</button>
+        ))}
+      </nav>
+
+      {/* ===== INTRO ===== */}
+      <section id="intro" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon()}>📖</div>まずは基礎知識から</div>
+          <div style={styles.sectionSub}>公的医療保険ってそもそも何？</div>
+          <div style={styles.introCard(GREEN)}>
+            <div style={styles.introCardTitle(GREEN)}>💡 公的医療保険とは？</div>
+            <p style={{ fontSize: 13, lineHeight: 1.8 }}>
+              病気やケガで病院に行くと治療費がかかります。でも毎回全額自分で払っていたら大変ですよね。
+              そこで国が作った仕組みが<span style={styles.highlight}>公的医療保険</span>です。<br /><br />
+              みんなで少しずつお金（<span style={styles.highlight}>保険料</span>）を出し合ってプールしておき、
+              誰かが病気になったときにそこから支払う——これが「保険」の基本的な考え方です。
+              日本とシンガポールでは、このプールの作り方や使い方がまったく異なります。
+            </p>
+          </div>
+          <div style={styles.twoCol}>
+            <div style={styles.card(JP_RED)}>
+              <span style={styles.countryTag("#FDECEA", JP_RED)}>🇯🇵 日本</span>
+              <div style={{ fontSize: 14, fontWeight: 900, marginBottom: 8 }}>「みんなで支え合う」<br />国民皆保険</div>
+              <div style={styles.bigNum(JP_RED)}>1961</div>
+              <div style={styles.numLabel}>年 全国民に適用開始</div>
+              <p style={{ fontSize: 12, color: MUTED, marginTop: 10, lineHeight: 1.7 }}>すべての国民が何らかの公的医療保険に加入することが義務。収入に応じて保険料が変わる「助け合い」の精神が根底にある。</p>
+            </div>
+            <div style={styles.card(SG_BLUE)}>
+              <span style={styles.countryTag("#E8F0FE", SG_BLUE)}>🇸🇬 シンガポール</span>
+              <div style={{ fontSize: 14, fontWeight: 900, marginBottom: 8 }}>「貯める＋保険＋補助」<br />3M制度</div>
+              <div style={styles.bigNum(SG_BLUE)}>1984</div>
+              <div style={styles.numLabel}>年 MediSave 導入開始</div>
+              <p style={{ fontSize: 12, color: MUTED, marginTop: 10, lineHeight: 1.7 }}>強制貯蓄・強制保険・政府補助の3層で構成。自己責任と政府サポートのバランスを重視した独自モデル。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== JAPAN ===== */}
+      <section id="japan" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon(JP_RED)}>🇯🇵</div>日本の公的医療保険制度</div>
+          <div style={styles.sectionSub}>「国民皆保険」——全員が加入する仕組み</div>
+
+          <div style={styles.flowWrap}>
+            <div style={styles.flowTitle}>
+              <span style={styles.badge("#FDECEA", JP_RED)}>日本</span> お金の流れ（体型図）
+            </div>
+            <div style={styles.flowDiagram}>
+              {[
+                { bg: "#F0FFF4", border: "#27AE60", color: "#1E7E34", main: "👤 国民・会社員（全員が保険料を支払う）", note: "収入が多いほど保険料も高い（応能負担）" },
+                null,
+                { bg: "#EBF5FB", border: "#2E86C1", color: "#1B4F72", main: "🏛️ 保険者（健康保険組合 / 国民健康保険 / 後期高齢者医療制度など）", note: "集めた保険料を管理するグループ" },
+                null,
+                { bg: "#FEF9E7", border: "#D4AC0D", color: "#7D6608", main: "💴 国・都道府県から公費（税金）も投入", note: "保険料だけでは足りない部分を税金で補填" },
+                null,
+                { bg: "#FDF2F8", border: "#8E44AD", color: "#5B2C6F", main: "🏥 医療機関（病院・クリニック・薬局）", note: "診察・治療・薬を提供" },
+                null,
+                { bg: "#FDFEFE", border: "#717D7E", color: "#424949", main: "👤 患者は窓口で 自己負担 1〜3割 だけ払えばOK！", note: "残りの7〜9割は保険から医療機関へ直接支払われる" },
+              ].map((item, i) =>
+                item === null
+                  ? <FlowArrow key={i} />
+                  : <div key={i} style={styles.flowBox(item.bg, item.border, item.color, false)}>
+                      <div>{item.main}</div>
+                      <div style={styles.flowNote}>{item.note}</div>
+                    </div>
+              )}
+            </div>
+          </div>
+
+          <div style={styles.twoCol}>
+            <div style={styles.card(JP_RED)}>
+              <span style={styles.countryTag("#FDECEA", JP_RED)}>種類</span>
+              <div style={{ fontSize: 14, fontWeight: 900, marginBottom: 10 }}>主な保険の種類</div>
+              <p style={{ fontSize: 12, color: MUTED, lineHeight: 1.9 }}>
+                🏢 <strong>健康保険</strong>（会社員・公務員）<br />会社と折半して保険料を支払う。<br /><br />
+                🌾 <strong>国民健康保険</strong>（自営業・学生など）<br />自分で全額払う。<br /><br />
+                👴 <strong>後期高齢者医療制度</strong><br />75歳以上を対象とした専用制度。
+              </p>
+            </div>
+            <div style={styles.card(JP_RED)}>
+              <span style={styles.countryTag("#FDECEA", JP_RED)}>自己負担</span>
+              <div style={{ fontSize: 14, fontWeight: 900, marginBottom: 10 }}>年齢別の自己負担割合</div>
+              <p style={{ fontSize: 12, color: MUTED, lineHeight: 1.9 }}>
+                👶 <strong>0〜2歳</strong>：2割<br />
+                🧒 <strong>3歳〜小学生</strong>：2割<br />
+                🧑 <strong>中学生〜69歳</strong>：3割<br />
+                👴 <strong>70〜74歳</strong>：2割（高収入は3割）<br />
+                🧓 <strong>75歳以上</strong>：1割（高収入は3割）
+              </p>
+            </div>
+          </div>
+
+          <div style={styles.introCard(JP_RED)}>
+            <div style={styles.introCardTitle(JP_RED)}>🛡️ 高額療養費制度</div>
+            <p style={{ fontSize: 13, lineHeight: 1.8 }}>
+              日本には<span style={styles.highlight}>高額療養費制度</span>という強力なセーフティネットがあります。
+              1ヶ月の医療費の自己負担が一定の上限額（一般的な収入の人は約8万円程度）を超えた場合、
+              超えた分は保険から払い戻されます。
+              大きな病気になっても<strong>自己負担が青天井になることはありません</strong>。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== SINGAPORE ===== */}
+      <section id="sg" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon(SG_BLUE)}>🇸🇬</div>シンガポールの公的医療保険制度</div>
+          <div style={styles.sectionSub}>「3M」——3つの仕組みが組み合わさった独自モデル</div>
+
+          <div style={styles.flowWrap}>
+            <div style={styles.flowTitle}>
+              <span style={styles.badge("#E8F0FE", SG_BLUE)}>シンガポール</span> 3Mの仕組み（体型図）
+            </div>
+            <div style={styles.flowDiagram}>
+              {[
+                { bg: "#F0FFF4", border: "#27AE60", color: "#1E7E34", dashed: false, main: "👤 働く人（全員）：給料の一部を強制積み立て", note: "CPF（中央積立基金）という制度を通じて自動的に積み立てられる" },
+                null,
+                { bg: "#EAF4FB", border: "#1A5276", color: "#1A5276", dashed: false, main: "💰 MediSave（メディセーブ）\n個人口座に医療費を貯め込む強制貯蓄", note: "自分の入院・手術費に使える「自分専用の医療貯金箱」" },
+                null,
+                { bg: "#EBF5FB", border: "#2874A6", color: "#2874A6", dashed: true, main: "🛡️ MediShield Life（メディシールド・ライフ）\n大きな病気・入院に対応する強制加入の保険", note: "MediSaveから保険料を自動引き落とし。高額な治療費をカバー" },
+                null,
+                { bg: "#E8F8F5", border: "#1E8449", color: "#1E8449", dashed: true, main: "🤝 MediFund（メディファンド）\nそれでも払えない人への政府基金（最後の砦）", note: "本当に困った人を救う政府の補助金制度" },
+                null,
+                { bg: "#FEF5E7", border: "#CA6F1E", color: "#7E5109", dashed: false, main: "🏥 公立病院での等級制度（Class A/B1/B2/C）\n病室の等級を下げるほど政府補助が増える", note: "Class C（大部屋）なら最大80%の政府補助が受けられる" },
+                null,
+                { bg: "#FDFEFE", border: "#717D7E", color: "#424949", dashed: false, main: "👤 患者は自己負担分を支払う", note: "MediSaveや保険で支払い可。でも日本より自己負担は多め" },
+              ].map((item, i) =>
+                item === null
+                  ? <FlowArrow key={i} />
+                  : <div key={i} style={styles.flowBox(item.bg, item.border, item.color, item.dashed)}>
+                      <div style={{ whiteSpace: "pre-line" }}>{item.main}</div>
+                      <div style={styles.flowNote}>{item.note}</div>
+                    </div>
+              )}
+            </div>
+          </div>
+
+          <div style={styles.threeCol}>
+            {[
+              { bg: "#EAF4FB", border: "#1A5276", icon: "💰", title: "MediSave", desc: "強制貯蓄。給料の約9〜10.5%が自動積み立て。入院・手術・一部の外来に使える「自分のお金」" },
+              { bg: "#EBF5FB", border: "#2874A6", icon: "🛡️", title: "MediShield Life", desc: "強制加入保険。全国民が加入。大病・長期入院時の高額請求をカバー。保険料はMediSaveから払う" },
+              { bg: "#E8F8F5", border: "#1E8449", icon: "🤝", title: "MediFund", desc: "政府基金。お金が本当にない人への最後のセーフティネット。申請が必要" },
+            ].map((m, i) => (
+              <div key={i} style={styles.mBox(m.bg, m.border)}>
+                <div style={styles.mBoxIcon}>{m.icon}</div>
+                <div style={styles.mBoxTitle}>{m.title}</div>
+                <div style={styles.mBoxP}>{m.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={styles.introCard(SG_BLUE)}>
+            <div style={styles.introCardTitle(SG_BLUE)}>🏨 公立病院の「等級制度」とは？</div>
+            <p style={{ fontSize: 13, lineHeight: 1.9 }}>
+              シンガポールの公立病院では、入院時に病室の等級を自分で選べます。<br />
+              <strong>Class A（個室・エアコン完備）</strong> → 政府補助なし・快適<br />
+              <strong>Class B1（4人部屋）</strong> → 補助あり<br />
+              <strong>Class B2（6人部屋）</strong> → さらに補助大<br />
+              <strong>Class C（大部屋・8人以上）</strong> → 最大 <span style={styles.highlight}>約80%の政府補助！</span><br /><br />
+              お金の余裕がある人はClass Aを選び、経済的に厳しい人はClass Cで大きな補助を受ける、
+              という「選択と自己責任」の考え方が反映されています。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== COMPARE TABLE ===== */}
+      <section id="compare" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon()}>⚖️</div>2つの制度を比べてみよう</div>
+          <div style={styles.sectionSub}>同じ「医療保険」でも、こんなに違う！</div>
+          <div style={{ overflowX: "auto", borderRadius: 16, boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.thGray}>比較ポイント</th>
+                  <th style={styles.thJp}>🇯🇵 日本</th>
+                  <th style={styles.thSg}>🇸🇬 シンガポール</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["制度の名前", "国民皆保険", "3M制度（MediSave / MediShield Life / MediFund）"],
+                  ["加入義務", <span style={styles.pill("#D5F5E3","#196F3D")}>全員強制加入</span>, <span style={styles.pill("#D5F5E3","#196F3D")}>MediSave・MediShield Lifeは強制</span>],
+                  ["基本的な考え方", "みんなで支え合う（連帯・相互扶助）", "自分で貯める＋保険＋補助（自己責任＋セーフティネット）"],
+                  ["保険料の決め方", "収入に応じて変わる（高収入→高い保険料）", "年齢に応じて変わる（年齢→保険料が上がる）"],
+                  ["外来（普通の受診）", <><span style={styles.pill("#D5F5E3","#196F3D")}>どこでも3割負担</span></>, <><span style={styles.pill("#FDEBD0","#935116")}>基本全額自己負担</span><br /><small>（一部クリニックで補助あり）</small></>],
+                  ["入院・手術", "3割負担＋高額療養費上限あり", "MediSave＋MediShield Lifeで対応。等級選択で補助が変わる"],
+                  ["高額医療への対応", <><span style={styles.pill("#D5F5E3","#196F3D")}>高額療養費制度で上限あり</span></>, <><span style={styles.pill("#D6EAF8","#1A5276")}>MediShield Lifeがカバー（限度額あり）</span></>],
+                  ["フリーアクセス", <><span style={styles.pill("#D5F5E3","#196F3D")}>原則どこでも受診可能</span></>, <><span style={styles.pill("#FDEBD0","#935116")}>紹介状が必要なケースが多い</span></>],
+                  ["GDP比 医療費", "約 10〜11%", "約 4〜5%"],
+                  ["平均寿命", "約 84歳", "約 83〜84歳"],
+                ].map(([label, jp, sg], i) => (
+                  <tr key={i}>
+                    <td style={{ ...styles.td(i % 2 === 1), fontWeight: 600, width: "28%" }}>{label}</td>
+                    <td style={{ ...styles.td(i % 2 === 1), textAlign: "center", color: MUTED }}>{jp}</td>
+                    <td style={{ ...styles.td(i % 2 === 1), textAlign: "center", color: MUTED }}>{sg}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== MERIT/DEMERIT ===== */}
+      <section id="merit" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon()}>✅</div>それぞれのメリット・デメリット</div>
+          <div style={styles.sectionSub}>どちらが「いい制度」とは言い切れない！</div>
+
+          <span style={{ ...styles.countryTag("#FDECEA", JP_RED), fontSize: 14, padding: "6px 14px", marginBottom: 10, display: "inline-flex" }}>🇯🇵 日本の国民皆保険</span>
+          <div style={styles.pointGrid}>
+            {[
+              { top: GREEN, e: "🏥", h: "どの病院にも行ける", p: "フリーアクセスで、好きな病院に紹介状なしで行けることが多い。専門医にも比較的アクセスしやすい。" },
+              { top: GREEN, e: "💰", h: "高額療養費制度で安心", p: "大病になっても月の自己負担に上限があるため、経済的に破綻するリスクが低い。" },
+              { top: GREEN, e: "🤝", h: "収入が低い人も受けられる", p: "応能負担（収入に応じた保険料）のため、貧しくても医療が受けられる。" },
+              { top: JP_RED, e: "💸", h: "保険料・税金の負担が大きい", p: "高齢化が進む中、現役世代の保険料負担が増加し続けている。財政的に持続可能か課題も。" },
+              { top: JP_RED, e: "🏃", h: "軽症でも受診が多い", p: "負担が少ないため、軽い症状でもすぐ病院に行く人が増え、医療費が膨らむ原因にも。" },
+            ].map((p, i) => (
+              <div key={i} style={styles.pointCard(p.top)}>
+                <div style={styles.pointEmoji}>{p.e}</div>
+                <div style={styles.pointH}>{p.h}</div>
+                <div style={styles.pointP}>{p.p}</div>
+              </div>
+            ))}
+          </div>
+
+          <span style={{ ...styles.countryTag("#E8F0FE", SG_BLUE), fontSize: 14, padding: "6px 14px", margin: "24px 0 10px", display: "inline-flex" }}>🇸🇬 シンガポールの3M制度</span>
+          <div style={styles.pointGrid}>
+            {[
+              { top: GREEN, e: "💡", h: "医療費が比較的安い（GDP比）", p: "自己責任の意識が高まり、不必要な受診が少ないため、国全体の医療費を抑えられている。" },
+              { top: GREEN, e: "🏦", h: "MediSaveは自分の資産", p: "積み立てたお金は基本的に自分のもの。死亡時は家族に相続できるなど、貯蓄の側面もある。" },
+              { top: GREEN, e: "🎯", h: "医療の質が高い", p: "経済的に豊かな人は高品質な医療を、困っている人は補助でカバーというメリハリのある制度。" },
+              { top: JP_RED, e: "🚑", h: "外来受診は自己負担が大きい", p: "普通の風邪や軽い病気でも基本は全額自己負担。特に低収入の人には負担が重い。" },
+              { top: JP_RED, e: "📋", h: "仕組みが複雑でわかりにくい", p: "3Mに加えて等級制度、各種補助など、制度全体が複雑で理解しにくいという声もある。" },
+              { top: JP_RED, e: "📉", h: "収入が低い人は貯蓄が少ない", p: "MediSaveは給料から積み立てるため、収入が低い人は医療費の備えが少なくなりがち。" },
+            ].map((p, i) => (
+              <div key={i} style={styles.pointCard(p.top)}>
+                <div style={styles.pointEmoji}>{p.e}</div>
+                <div style={styles.pointH}>{p.h}</div>
+                <div style={styles.pointP}>{p.p}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== QUIZ ===== */}
+      <section id="quiz" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon()}>🧠</div>理解度チェック！クイズ</div>
+          <div style={styles.sectionSub}>読んだ内容をクイズで確認しよう</div>
+          {quizData.map((q, i) => <Quiz key={i} data={q} />)}
+        </div>
+      </section>
+
+      <div style={styles.container}><div style={styles.divider} /></div>
+
+      {/* ===== SUMMARY ===== */}
+      <section id="summary" style={styles.section}>
+        <div style={styles.container}>
+          <div style={styles.sectionTitle}><div style={styles.sectionIcon()}>📝</div>まとめ</div>
+          <div style={styles.sectionSub}>2つの制度の本質的な違いをおさえよう</div>
+          <div style={styles.summaryBox}>
+            <div style={styles.summaryH}>🎯 このページで学んだこと</div>
+            {[
+              { b: ["#FDECEA", JP_RED, "日"], t: <>日本の<strong>国民皆保険</strong>は「みんなで支え合う」仕組み。収入に応じた保険料で、誰でも安く医療を受けられる。高額療養費制度により、大病になっても自己負担に上限がある。</> },
+              { b: ["#E8F0FE", SG_BLUE, "星"], t: <>シンガポールの<strong>3M制度</strong>は「自分で貯める＋保険＋補助」の3層構造。MediSave（強制貯蓄）・MediShield Life（強制保険）・MediFund（最後の砦）で成り立つ。</> },
+              { b: ["#E8F0FE", SG_BLUE, "星"], t: <>シンガポールは公立病院で<strong>等級を選べる</strong>。大部屋（Class C）を選ぶほど政府補助が大きくなる。「選択の自由と自己責任」を重視した設計。</> },
+              { b: ["#FDECEA", JP_RED, "日"], t: <>日本は<strong>フリーアクセス</strong>（好きな病院に行ける）が強みだが、高齢化による財政圧迫が課題。</> },
+              { b: ["#FEF9E7", "#D4AC0D", "比"], t: <>どちらの制度が「優れている」とは言い切れない。<strong>社会の価値観（連帯か自己責任か）</strong>の違いが制度の違いに直結している。</> },
+            ].map((item, i) => (
+              <div key={i} style={styles.summaryLi}>
+                <div style={styles.bullet(item.b[0], item.b[1])}>{item.b[2]}</div>
+                <span>{item.t}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ ...styles.introCard("#8E44AD"), marginTop: 20 }}>
+            <div style={{ ...styles.introCardTitle("#8E44AD") }}>🤔 考えてみよう</div>
+            <p style={{ fontSize: 13, lineHeight: 1.8 }}>
+              日本とシンガポール、あなたはどちらの仕組みが好きですか？<br />
+              「お金に余裕があれば良い病院に入れる」のが公平でしょうか？<br />
+              それとも「お金があっても貧しくても同じ医療を受けられる」のが大切でしょうか？<br /><br />
+              社会保障制度は<strong>「どんな社会をつくりたいか」</strong>という価値観の表れです。
+              ぜひ家族や友達と話し合ってみてください！
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer style={styles.footer}>
+        <div>🏥 日本 vs シンガポール 社会保障制度 比較シリーズ #01 — 公的医療保険制度</div>
+        <div style={{ marginTop: 6 }}>※ 本ページのデータは概要説明を目的としており、制度の詳細や数値は変更される場合があります。</div>
+      </footer>
+    </div>
+  );
+}
