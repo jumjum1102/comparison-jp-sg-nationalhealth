@@ -174,11 +174,6 @@
       background: #111;
     }
 
-    .panel-soft {
-      border: 1px solid #1f1f1f;
-      background: #101010;
-    }
-
     .compare-table {
       width: 100%;
       border-collapse: collapse;
@@ -269,14 +264,8 @@
       gap: 14px;
     }
 
-    .cards-2 {
-      grid-template-columns: 1fr;
-    }
-
-    .cards-3 {
-      grid-template-columns: 1fr;
-    }
-
+    .cards-2,
+    .cards-3,
     .cards-auto {
       grid-template-columns: 1fr;
     }
@@ -404,12 +393,13 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    const HERO_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Singapore%20General%20Hospital%20Bowyer%20Block%202022.jpg";
-    const INTRO_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Tock%20Seng%20Hospital%20Singapore%202018.jpg";
-    const JAPAN_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Japanese%20hospital%20corridor.jpg";
-    const SG_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Ng%20Teng%20Fong%20General%20Hospital%20Singapore.jpg";
-    const COMPARE_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Hospital%20ward%20Singapore.jpg";
-    const MERIT_IMG = "https://commons.wikimedia.org/wiki/Special:FilePath/Medical%20consultation%20room.jpg";
+    // GitHub Pages向け：Wikimedia Commons の画像ファイルへ直接リダイレクト
+    const HERO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bowyer%20Block%20at%20SGH.JPG";
+    const INTRO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%2C%20panorama%2C%20Aug%2006.jpg";
+    const JAPAN_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%204%2C%20Aug%2006.JPG";
+    const SG_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jurong%20-%20Ng%20Teng%20Fong%20General%20Hospital%20%282025%29%20-%20img%2001.jpg";
+    const COMPARE_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ng%20Teng%20Fong%20General%20Hospital%20and%20Jurong%20Community%20Hospital.jpg";
+    const MERIT_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%203%2C%20Aug%2006.JPG";
 
     const NAV_ITEMS = [
       { id: "hero", en: "TOP", ja: "TOP" },
@@ -426,8 +416,6 @@
     const SG_BLUE = "#5B8DB8";
     const GOLD = "#D4A843";
     const GREEN = "#5FA56C";
-    const BG = "#0D0D0D";
-    const BG2 = "#0A0A0A";
     const LINE = "#1E1E1E";
     const MUTED = "#8C8C8C";
     const TEXT = "#C9C5BE";
@@ -443,8 +431,6 @@
       return {
         width: w,
         isMobile: w < 640,
-        isTabletUp: w >= 900,
-        isDesktop: w >= 1200,
       };
     }
 
@@ -720,12 +706,7 @@
 
             <section id="intro" className="section-pad">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="01 — BASICS"
-                  ja="まずは基礎知識から"
-                  en="What Is Public Health Insurance?"
-                  compact={isMobile}
-                />
+                <SectionHeader num="01 — BASICS" ja="まずは基礎知識から" en="What Is Public Health Insurance?" compact={isMobile} />
                 <img src={INTRO_IMG} alt="hospital introduction" className="section-photo" style={sectionPhotoStyle} />
 
                 <div className="metric-grid">
@@ -779,12 +760,7 @@
 
             <section id="japan" className="section-pad section-alt">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="02 — JAPAN"
-                  ja="日本の公的医療保険制度"
-                  en="Universal Coverage for Everyone"
-                  compact={isMobile}
-                />
+                <SectionHeader num="02 — JAPAN" ja="日本の公的医療保険制度" en="Universal Coverage for Everyone" compact={isMobile} />
                 <img src={JAPAN_IMG} alt="japan healthcare" className="section-photo" style={sectionPhotoStyle} />
 
                 <div className="panel" style={{ padding: isMobile ? "16px 14px" : "22px 20px", marginBottom: 18 }}>
@@ -792,35 +768,15 @@
                     Flow of Money — Japan
                   </div>
                   <div className="flow-stack">
-                    <FlowBox
-                      title="👤 国民・会社員（全員が保険料を支払う）"
-                      note="収入が多いほど保険料も高い（応能負担）"
-                      accent="rgba(95,165,108,.45)"
-                    />
+                    <FlowBox title="👤 国民・会社員（全員が保険料を支払う）" note="収入が多いほど保険料も高い（応能負担）" accent="rgba(95,165,108,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="🏛️ 保険者（健康保険組合 / 国民健康保険 / 後期高齢者医療制度など）"
-                      note="集めた保険料を管理するグループ"
-                      accent="rgba(91,141,184,.45)"
-                    />
+                    <FlowBox title="🏛️ 保険者（健康保険組合 / 国民健康保険 / 後期高齢者医療制度など）" note="集めた保険料を管理するグループ" accent="rgba(91,141,184,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="💴 国・都道府県から公費（税金）も投入"
-                      note="保険料だけでは足りない部分を税金で補填"
-                      accent="rgba(212,168,67,.45)"
-                    />
+                    <FlowBox title="💴 国・都道府県から公費（税金）も投入" note="保険料だけでは足りない部分を税金で補填" accent="rgba(212,168,67,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="🏥 医療機関（病院・クリニック・薬局）"
-                      note="診察・治療・薬を提供"
-                      accent="rgba(201,85,85,.45)"
-                    />
+                    <FlowBox title="🏥 医療機関（病院・クリニック・薬局）" note="診察・治療・薬を提供" accent="rgba(201,85,85,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="👤 患者は窓口で 自己負担 1〜3割 だけ払えばOK！"
-                      note="残りの7〜9割は保険から医療機関へ直接支払われる"
-                      accent="rgba(240,237,232,.25)"
-                    />
+                    <FlowBox title="👤 患者は窓口で 自己負担 1〜3割 だけ払えばOK！" note="残りの7〜9割は保険から医療機関へ直接支払われる" accent="rgba(240,237,232,.25)" />
                   </div>
                 </div>
 
@@ -866,12 +822,7 @@
 
             <section id="sg" className="section-pad">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="03 — SINGAPORE"
-                  ja="シンガポールの公的医療保険制度"
-                  en="The 3M Model: Save, Insure, Subsidise"
-                  compact={isMobile}
-                />
+                <SectionHeader num="03 — SINGAPORE" ja="シンガポールの公的医療保険制度" en="The 3M Model: Save, Insure, Subsidise" compact={isMobile} />
                 <img src={SG_IMG} alt="singapore healthcare" className="section-photo" style={sectionPhotoStyle} />
 
                 <div className="panel" style={{ padding: isMobile ? "16px 14px" : "22px 20px", marginBottom: 18 }}>
@@ -879,43 +830,17 @@
                     Flow of Money — Singapore
                   </div>
                   <div className="flow-stack">
-                    <FlowBox
-                      title="👤 働く人（全員）：給料の一部を強制積み立て"
-                      note="CPF（中央積立基金）という制度を通じて自動的に積み立てられる"
-                      accent="rgba(95,165,108,.45)"
-                    />
+                    <FlowBox title="👤 働く人（全員）：給料の一部を強制積み立て" note="CPF（中央積立基金）という制度を通じて自動的に積み立てられる" accent="rgba(95,165,108,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="💰 MediSave（メディセーブ） 個人口座に医療費を貯め込む強制貯蓄"
-                      note="自分の入院・手術費に使える「自分専用の医療貯金箱」"
-                      accent="rgba(91,141,184,.45)"
-                    />
+                    <FlowBox title="💰 MediSave（メディセーブ） 個人口座に医療費を貯め込む強制貯蓄" note="自分の入院・手術費に使える「自分専用の医療貯金箱」" accent="rgba(91,141,184,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="🛡️ MediShield Life（メディシールド・ライフ） 大きな病気・入院に対応する強制加入の保険"
-                      note="MediSaveから保険料を自動引き落とし。高額な治療費をカバー"
-                      accent="rgba(91,141,184,.45)"
-                      dashed={true}
-                    />
+                    <FlowBox title="🛡️ MediShield Life（メディシールド・ライフ） 大きな病気・入院に対応する強制加入の保険" note="MediSaveから保険料を自動引き落とし。高額な治療費をカバー" accent="rgba(91,141,184,.45)" dashed={true} />
                     <FlowArrow />
-                    <FlowBox
-                      title="🤝 MediFund（メディファンド） それでも払えない人への政府基金（最後の砦）"
-                      note="本当に困った人を救う政府の補助金制度"
-                      accent="rgba(95,165,108,.45)"
-                      dashed={true}
-                    />
+                    <FlowBox title="🤝 MediFund（メディファンド） それでも払えない人への政府基金（最後の砦）" note="本当に困った人を救う政府の補助金制度" accent="rgba(95,165,108,.45)" dashed={true} />
                     <FlowArrow />
-                    <FlowBox
-                      title="🏥 公立病院での等級制度（Class A/B1/B2/C） 病室の等級を下げるほど政府補助が増える"
-                      note="Class C（大部屋）なら最大80%の政府補助が受けられる"
-                      accent="rgba(212,168,67,.45)"
-                    />
+                    <FlowBox title="🏥 公立病院での等級制度（Class A/B1/B2/C） 病室の等級を下げるほど政府補助が増える" note="Class C（大部屋）なら最大80%の政府補助が受けられる" accent="rgba(212,168,67,.45)" />
                     <FlowArrow />
-                    <FlowBox
-                      title="👤 患者は自己負担分を支払う"
-                      note="MediSaveや保険で支払い可。でも日本より自己負担は多め"
-                      accent="rgba(240,237,232,.25)"
-                    />
+                    <FlowBox title="👤 患者は自己負担分を支払う" note="MediSaveや保険で支払い可。でも日本より自己負担は多め" accent="rgba(240,237,232,.25)" />
                   </div>
                 </div>
 
@@ -967,12 +892,7 @@
 
             <section id="compare" className="section-pad section-alt">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="04 — COMPARISON"
-                  ja="2つの制度を比べてみよう"
-                  en="Same Goal, Different Design"
-                  compact={isMobile}
-                />
+                <SectionHeader num="04 — COMPARISON" ja="2つの制度を比べてみよう" en="Same Goal, Different Design" compact={isMobile} />
                 <img src={COMPARE_IMG} alt="compare healthcare" className="section-photo" style={sectionPhotoStyle} />
 
                 <div className="panel" style={{ overflowX: "auto" }}>
@@ -1011,12 +931,7 @@
 
             <section id="merit" className="section-pad">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="05 — MERITS & TRADE-OFFS"
-                  ja="それぞれのメリット・デメリット"
-                  en="No System Is Perfect"
-                  compact={isMobile}
-                />
+                <SectionHeader num="05 — MERITS & TRADE-OFFS" ja="それぞれのメリット・デメリット" en="No System Is Perfect" compact={isMobile} />
                 <img src={MERIT_IMG} alt="medical consultation" className="section-photo" style={sectionPhotoStyle} />
 
                 <div style={{ marginBottom: 10 }}><span className="pill jp">🇯🇵 日本の国民皆保険</span></div>
@@ -1060,24 +975,14 @@
 
             <section id="quiz" className="section-pad section-alt">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="06 — QUIZ"
-                  ja="理解度チェック！クイズ"
-                  en="Quick Review"
-                  compact={isMobile}
-                />
+                <SectionHeader num="06 — QUIZ" ja="理解度チェック！クイズ" en="Quick Review" compact={isMobile} />
                 {quizData.map((q, i) => <Quiz key={i} data={q} />)}
               </div>
             </section>
 
             <section id="summary" className="section-pad">
               <div className="content-wrap narrow">
-                <SectionHeader
-                  num="07 — SUMMARY"
-                  ja="まとめ"
-                  en="What This Comparison Tells Us"
-                  compact={isMobile}
-                />
+                <SectionHeader num="07 — SUMMARY" ja="まとめ" en="What This Comparison Tells Us" compact={isMobile} />
 
                 <div className="panel" style={{ padding: isMobile ? "16px 14px" : "24px 22px", marginBottom: 20 }}>
                   <div style={{ fontFamily: "Inter, sans-serif", fontSize: 9, letterSpacing: 3, color: GOLD, marginBottom: 14, textTransform: "uppercase" }}>
@@ -1126,7 +1031,7 @@
                 </div>
                 <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#333", lineHeight: 1.8 }}>
                   ※ 本ページのデータは概要説明を目的としており、制度の詳細や数値は変更される場合があります。<br />
-                  Images are referenced externally using publicly accessible file paths.
+                  Images are referenced from Wikimedia Commons.
                 </div>
               </div>
             </footer>
