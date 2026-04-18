@@ -390,266 +390,267 @@
 <body>
   <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+<script type="text/babel">
+  const { useState, useEffect } = React;
 
-    // GitHub Pages向け：Wikimedia Commons の画像ファイルへ直接リダイレクト
-    const HERO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bowyer%20Block%20at%20SGH.JPG";
-    const INTRO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%2C%20panorama%2C%20Aug%2006.jpg";
-    const JAPAN_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%204%2C%20Aug%2006.JPG";
-    const SG_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jurong%20-%20Ng%20Teng%20Fong%20General%20Hospital%20%282025%29%20-%20img%2001.jpg";
-    const COMPARE_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ng%20Teng%20Fong%20General%20Hospital%20and%20Jurong%20Community%20Hospital.jpg";
-    const MERIT_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Tan%20Tock%20Seng%20Hospital%203%2C%20Aug%2006.JPG";
+  // GitHub Pages向け：Wikimedia Commons の画像ファイルへ直接リダイレクト
+  // 建物中心ではなく、病院内・医療現場・薬の写真に差し替え
+  const HERO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nurse%20administering%20medicine%20using%20a%20spoon%20in%20a%20healthcare%20setting%20during%20the%20day.jpg";
+  const INTRO_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nurse%20administers%20oral%20chemotherapy.jpg";
+  const JAPAN_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/The%20German%20Hospital%2C%20Dalston%3B%20a%20ward%20with%20patients%20and%20nurse%20Wellcome%20L0028128.jpg";
+  const SG_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Clinicians%20in%20Intensive%20Care%20Unit.jpg";
+  const COMPARE_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/A%20patient%20exam%20room%20at%20an%20urgent%20care%20clinic%20and%20doctor%E2%80%99s%20office%20in%20North%20Carolina%2C%20United%20States%2006.jpg";
+  const MERIT_IMG = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Pills%20in%20blister%20pack.jpg";
 
-    const NAV_ITEMS = [
-      { id: "hero", en: "TOP", ja: "TOP" },
-      { id: "intro", en: "BASICS", ja: "基礎" },
-      { id: "japan", en: "JAPAN", ja: "日本" },
-      { id: "sg", en: "SINGAPORE", ja: "シンガポール" },
-      { id: "compare", en: "COMPARE", ja: "比較" },
-      { id: "merit", en: "MERITS", ja: "特徴" },
-      { id: "quiz", en: "QUIZ", ja: "クイズ" },
-      { id: "summary", en: "SUMMARY", ja: "まとめ" },
-    ];
+  const NAV_ITEMS = [
+    { id: "hero", en: "TOP", ja: "TOP" },
+    { id: "intro", en: "BASICS", ja: "基礎" },
+    { id: "japan", en: "JAPAN", ja: "日本" },
+    { id: "sg", en: "SINGAPORE", ja: "シンガポール" },
+    { id: "compare", en: "COMPARE", ja: "比較" },
+    { id: "merit", en: "MERITS", ja: "特徴" },
+    { id: "quiz", en: "QUIZ", ja: "クイズ" },
+    { id: "summary", en: "SUMMARY", ja: "まとめ" },
+  ];
 
-    const JP_RED = "#C95555";
-    const SG_BLUE = "#5B8DB8";
-    const GOLD = "#D4A843";
-    const GREEN = "#5FA56C";
-    const LINE = "#1E1E1E";
-    const MUTED = "#8C8C8C";
-    const TEXT = "#C9C5BE";
-    const WHITE = "#F0EDE8";
+  const JP_RED = "#C95555";
+  const SG_BLUE = "#5B8DB8";
+  const GOLD = "#D4A843";
+  const GREEN = "#5FA56C";
+  const LINE = "#1E1E1E";
+  const MUTED = "#8C8C8C";
+  const TEXT = "#C9C5BE";
+  const WHITE = "#F0EDE8";
 
-    function useViewport() {
-      const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
-      useEffect(() => {
-        const h = () => setW(window.innerWidth);
-        window.addEventListener("resize", h);
-        return () => window.removeEventListener("resize", h);
-      }, []);
-      return {
-        width: w,
-        isMobile: w < 640,
-      };
-    }
+  function useViewport() {
+    const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
+    useEffect(() => {
+      const h = () => setW(window.innerWidth);
+      window.addEventListener("resize", h);
+      return () => window.removeEventListener("resize", h);
+    }, []);
+    return {
+      width: w,
+      isMobile: w < 640,
+    };
+  }
 
-    function SectionHeader({ num, ja, en, compact=false }) {
-      return (
-        <div style={{ marginBottom: compact ? 26 : 44 }}>
-          <div style={{ marginBottom: compact ? 16 : 32 }}>
-            <div style={{ fontFamily: "Inter, sans-serif", fontSize: 9, letterSpacing: 3, color: GOLD, textTransform: "uppercase", marginBottom: 8 }}>
-              {num}
-            </div>
-            <div style={{ fontSize: compact ? 20 : "clamp(22px,4vw,40px)", fontWeight: 700, lineHeight: 1.35, whiteSpace: "pre-wrap" }}>
-              {ja}
-            </div>
-            <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 13, color: "#555", marginTop: 4 }}>
-              {en}
-            </div>
+  function SectionHeader({ num, ja, en, compact=false }) {
+    return (
+      <div style={{ marginBottom: compact ? 26 : 44 }}>
+        <div style={{ marginBottom: compact ? 16 : 32 }}>
+          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 9, letterSpacing: 3, color: GOLD, textTransform: "uppercase", marginBottom: 8 }}>
+            {num}
           </div>
-          <div style={{ width: "100%", height: 1, background: LINE }} />
-        </div>
-      );
-    }
-
-    function MetricCard({ value, label }) {
-      return (
-        <div className="panel" style={{ padding: "18px 16px" }}>
-          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 30, fontWeight: 800, color: GOLD, lineHeight: 1 }}>{value}</div>
-          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#666", letterSpacing: 1, marginTop: 4 }}>{label}</div>
-        </div>
-      );
-    }
-
-    function FlowArrow() {
-      return (
-        <div className="flow-arrow">
-          <div style={{ width: 1, height: 16, background: "#4A3E1A" }} />
-          <div>▼</div>
-        </div>
-      );
-    }
-
-    function FlowBox({ title, note, accent="var(--gold)", dashed=false }) {
-      return (
-        <div
-          className="flow-box"
-          style={{
-            border: `1px ${dashed ? "dashed" : "solid"} ${accent}`,
-            background: "#101010"
-          }}
-        >
-          <div style={{ fontSize: 14, lineHeight: 1.8, color: WHITE }}>{title}</div>
-          <div className="flow-note">{note}</div>
-        </div>
-      );
-    }
-
-    function Quiz({ data }) {
-      const [selected, setSelected] = useState(null);
-      const answered = selected !== null;
-
-      return (
-        <div className="quiz-wrap">
-          <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{data.emoji} {data.title}</div>
-          <div style={{ fontFamily: "Inter, sans-serif", fontSize: 14, lineHeight: 1.9, color: TEXT, marginBottom: 16 }}>
-            {data.q}
+          <div style={{ fontSize: compact ? 20 : "clamp(22px,4vw,40px)", fontWeight: 700, lineHeight: 1.35, whiteSpace: "pre-wrap" }}>
+            {ja}
           </div>
+          <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 13, color: "#555", marginTop: 4 }}>
+            {en}
+          </div>
+        </div>
+        <div style={{ width: "100%", height: 1, background: LINE }} />
+      </div>
+    );
+  }
 
-          {data.options.map((o, i) => {
-            const cls = answered
-              ? i === selected
-                ? o.correct ? "quiz-btn correct" : "quiz-btn wrong"
-                : o.correct
-                ? "quiz-btn correct"
-                : "quiz-btn"
-              : "quiz-btn";
+  function MetricCard({ value, label }) {
+    return (
+      <div className="panel" style={{ padding: "18px 16px" }}>
+        <div style={{ fontFamily: "Inter, sans-serif", fontSize: 30, fontWeight: 800, color: GOLD, lineHeight: 1 }}>{value}</div>
+        <div style={{ fontFamily: "Inter, sans-serif", fontSize: 10, color: "#666", letterSpacing: 1, marginTop: 4 }}>{label}</div>
+      </div>
+    );
+  }
 
-            return (
-              <button
-                key={i}
-                className={cls}
-                disabled={answered}
-                onClick={() => setSelected(i)}
-              >
-                {o.text}
-              </button>
-            );
-          })}
+  function FlowArrow() {
+    return (
+      <div className="flow-arrow">
+        <div style={{ width: 1, height: 16, background: "#4A3E1A" }} />
+        <div>▼</div>
+      </div>
+    );
+  }
 
-          {answered && (
-            <div
-              style={{
-                marginTop: 8,
-                border: `1px solid ${data.options[selected].correct ? "rgba(95,165,108,.45)" : "rgba(201,85,85,.45)"}`,
-                background: data.options[selected].correct ? "rgba(95,165,108,.08)" : "rgba(201,85,85,.08)",
-                padding: "12px 12px",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 13,
-                lineHeight: 1.9,
-                color: TEXT
-              }}
+  function FlowBox({ title, note, accent="var(--gold)", dashed=false }) {
+    return (
+      <div
+        className="flow-box"
+        style={{
+          border: `1px ${dashed ? "dashed" : "solid"} ${accent}`,
+          background: "#101010"
+        }}
+      >
+        <div style={{ fontSize: 14, lineHeight: 1.8, color: WHITE }}>{title}</div>
+        <div className="flow-note">{note}</div>
+      </div>
+    );
+  }
+
+  function Quiz({ data }) {
+    const [selected, setSelected] = useState(null);
+    const answered = selected !== null;
+
+    return (
+      <div className="quiz-wrap">
+        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{data.emoji} {data.title}</div>
+        <div style={{ fontFamily: "Inter, sans-serif", fontSize: 14, lineHeight: 1.9, color: TEXT, marginBottom: 16 }}>
+          {data.q}
+        </div>
+
+        {data.options.map((o, i) => {
+          const cls = answered
+            ? i === selected
+              ? o.correct ? "quiz-btn correct" : "quiz-btn wrong"
+              : o.correct
+              ? "quiz-btn correct"
+              : "quiz-btn"
+            : "quiz-btn";
+
+          return (
+            <button
+              key={i}
+              className={cls}
+              disabled={answered}
+              onClick={() => setSelected(i)}
             >
-              {data.explanation(data.options[selected].correct)}
-            </div>
-          )}
-        </div>
-      );
+              {o.text}
+            </button>
+          );
+        })}
+
+        {answered && (
+          <div
+            style={{
+              marginTop: 8,
+              border: `1px solid ${data.options[selected].correct ? "rgba(95,165,108,.45)" : "rgba(201,85,85,.45)"}`,
+              background: data.options[selected].correct ? "rgba(95,165,108,.08)" : "rgba(201,85,85,.08)",
+              padding: "12px 12px",
+              fontFamily: "Inter, sans-serif",
+              fontSize: 13,
+              lineHeight: 1.9,
+              color: TEXT
+            }}
+          >
+            {data.explanation(data.options[selected].correct)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const quizData = [
+    {
+      emoji: "🏥",
+      title: "クイズ ①",
+      q: "日本の「高額療養費制度」とはどんな制度でしょうか？",
+      options: [
+        { text: "① 収入が低い人は医療費を全額免除してもらえる制度", correct: false },
+        { text: "② 1か月の医療費の自己負担が一定の上限を超えたら払い戻してもらえる制度", correct: true },
+        { text: "③ 高齢者だけが使える特別な制度", correct: false },
+      ],
+      explanation: (ok) =>
+        ok
+          ? "✅ 正解！ 高額療養費制度は1か月の自己負担が上限を超えた分を払い戻してもらえる制度です。大病でも経済的に破綻しないための重要な仕組みです。"
+          : "❌ 正解は②です。収入に関係なく、1か月の自己負担が上限を超えた部分を後で払い戻してもらえる制度です。"
+    },
+    {
+      emoji: "🇸🇬",
+      title: "クイズ ②",
+      q: "シンガポールのMediSave（メディセーブ）はどんな仕組みでしょうか？",
+      options: [
+        { text: "① 国がすべての国民に毎年配る医療費補助金", correct: false },
+        { text: "② 民間の保険会社が売っている任意加入の保険", correct: false },
+        { text: "③ 給料の一部を医療費のために強制的に個人口座に積み立てる制度", correct: true },
+      ],
+      explanation: (ok) =>
+        ok
+          ? "✅ 正解！ MediSaveは給料の約9〜10.5%が自動的に個人口座に積み立てられる「強制貯蓄」です。自分の入院・手術費などに使えます。"
+          : "❌ 正解は③です。給料から自動で積み立てられる個人の医療費貯蓄口座です。"
+    },
+    {
+      emoji: "⚖️",
+      title: "クイズ ③",
+      q: "シンガポールの公立病院の「等級制度」では、どの等級が最も政府補助が大きい？",
+      options: [
+        { text: "① Class A（個室・快適な設備）", correct: false },
+        { text: "② Class B1（4人部屋）", correct: false },
+        { text: "③ Class C（大部屋・8人以上）", correct: true },
+      ],
+      explanation: (ok) =>
+        ok
+          ? "✅ 正解！ Class C（大部屋）では最大約80%もの政府補助が受けられます。快適さを犠牲にする代わりに大きな支援を受けられる仕組みです。"
+          : "❌ 正解は③のClass Cです。大部屋を選ぶほど政府補助が大きくなります。"
     }
+  ];
 
-    const quizData = [
-      {
-        emoji: "🏥",
-        title: "クイズ ①",
-        q: "日本の「高額療養費制度」とはどんな制度でしょうか？",
-        options: [
-          { text: "① 収入が低い人は医療費を全額免除してもらえる制度", correct: false },
-          { text: "② 1か月の医療費の自己負担が一定の上限を超えたら払い戻してもらえる制度", correct: true },
-          { text: "③ 高齢者だけが使える特別な制度", correct: false },
-        ],
-        explanation: (ok) =>
-          ok
-            ? "✅ 正解！ 高額療養費制度は1か月の自己負担が上限を超えた分を払い戻してもらえる制度です。大病でも経済的に破綻しないための重要な仕組みです。"
-            : "❌ 正解は②です。収入に関係なく、1か月の自己負担が上限を超えた部分を後で払い戻してもらえる制度です。"
-      },
-      {
-        emoji: "🇸🇬",
-        title: "クイズ ②",
-        q: "シンガポールのMediSave（メディセーブ）はどんな仕組みでしょうか？",
-        options: [
-          { text: "① 国がすべての国民に毎年配る医療費補助金", correct: false },
-          { text: "② 民間の保険会社が売っている任意加入の保険", correct: false },
-          { text: "③ 給料の一部を医療費のために強制的に個人口座に積み立てる制度", correct: true },
-        ],
-        explanation: (ok) =>
-          ok
-            ? "✅ 正解！ MediSaveは給料の約9〜10.5%が自動的に個人口座に積み立てられる「強制貯蓄」です。自分の入院・手術費などに使えます。"
-            : "❌ 正解は③です。給料から自動で積み立てられる個人の医療費貯蓄口座です。"
-      },
-      {
-        emoji: "⚖️",
-        title: "クイズ ③",
-        q: "シンガポールの公立病院の「等級制度」では、どの等級が最も政府補助が大きい？",
-        options: [
-          { text: "① Class A（個室・快適な設備）", correct: false },
-          { text: "② Class B1（4人部屋）", correct: false },
-          { text: "③ Class C（大部屋・8人以上）", correct: true },
-        ],
-        explanation: (ok) =>
-          ok
-            ? "✅ 正解！ Class C（大部屋）では最大約80%もの政府補助が受けられます。快適さを犠牲にする代わりに大きな支援を受けられる仕組みです。"
-            : "❌ 正解は③のClass Cです。大部屋を選ぶほど政府補助が大きくなります。"
-      }
-    ];
+  function App() {
+    const { isMobile } = useViewport();
+    const [active, setActive] = useState("hero");
 
-    function App() {
-      const { isMobile } = useViewport();
-      const [active, setActive] = useState("hero");
+    useEffect(() => {
+      const obs = new IntersectionObserver(
+        (entries) => entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        }),
+        { threshold: 0.28 }
+      );
 
-      useEffect(() => {
-        const obs = new IntersectionObserver(
-          (entries) => entries.forEach((e) => {
-            if (e.isIntersecting) setActive(e.target.id);
-          }),
-          { threshold: 0.28 }
-        );
+      NAV_ITEMS.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (el) obs.observe(el);
+      });
 
-        NAV_ITEMS.forEach(({ id }) => {
-          const el = document.getElementById(id);
-          if (el) obs.observe(el);
-        });
+      return () => obs.disconnect();
+    }, []);
 
-        return () => obs.disconnect();
-      }, []);
+    const go = (id) => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      setActive(id);
+    };
 
-      const go = (id) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-        setActive(id);
-      };
+    const sectionPhotoStyle = {
+      width: "100%",
+      height: isMobile ? 220 : 320,
+      objectFit: "cover",
+      objectPosition: "center center",
+      filter: "brightness(0.76)",
+      marginBottom: 28,
+      border: "1px solid #1a1a1a"
+    };
 
-      const sectionPhotoStyle = {
-        width: "100%",
-        height: isMobile ? 220 : 320,
-        objectFit: "cover",
-        objectPosition: "center center",
-        filter: "brightness(0.76)",
-        marginBottom: 28,
-        border: "1px solid #1a1a1a"
-      };
-
-      return (
-        <div className="page-shell">
-          {!isMobile && (
-            <nav className="desktop-rail">
-              <div style={{ writingMode: "vertical-rl", fontFamily: "Inter, sans-serif", fontSize: 10, letterSpacing: 4, color: MUTED, marginBottom: 28, textTransform: "uppercase" }}>
-                Medical
+    return (
+      <div className="page-shell">
+        {!isMobile && (
+          <nav className="desktop-rail">
+            <div style={{ writingMode: "vertical-rl", fontFamily: "Inter, sans-serif", fontSize: 10, letterSpacing: 4, color: MUTED, marginBottom: 28, textTransform: "uppercase" }}>
+              Medical
+            </div>
+            {NAV_ITEMS.map(({ id, en }) => (
+              <div key={id} onClick={() => go(id)} style={{ textAlign: "center", marginBottom: 2, cursor: "pointer" }}>
+                <div style={{ width: 4, height: 4, borderRadius: "50%", background: active === id ? GOLD : "#333", margin: "3px auto", transition: "background .3s" }} />
+                <div style={{ writingMode: "vertical-rl", fontSize: 8, letterSpacing: 2, color: active === id ? GOLD : "#444", padding: "8px 3px", textTransform: "uppercase", fontFamily: "Inter, sans-serif", transition: "color .3s" }}>
+                  {en}
+                </div>
               </div>
-              {NAV_ITEMS.map(({ id, en }) => (
-                <div key={id} onClick={() => go(id)} style={{ textAlign: "center", marginBottom: 2, cursor: "pointer" }}>
-                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: active === id ? GOLD : "#333", margin: "3px auto", transition: "background .3s" }} />
-                  <div style={{ writingMode: "vertical-rl", fontSize: 8, letterSpacing: 2, color: active === id ? GOLD : "#444", padding: "8px 3px", textTransform: "uppercase", fontFamily: "Inter, sans-serif", transition: "color .3s" }}>
-                    {en}
-                  </div>
-                </div>
-              ))}
-            </nav>
-          )}
+            ))}
+          </nav>
+        )}
 
-          {isMobile && (
-            <nav className="mobile-bottom-nav">
-              {NAV_ITEMS.map(({ id, en }) => (
-                <div key={id} onClick={() => go(id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "2px 4px" }}>
-                  <div style={{ width: 3, height: 3, borderRadius: "50%", background: active === id ? GOLD : "#333", transition: "background .3s" }} />
-                  <div style={{ fontFamily: "Inter, sans-serif", fontSize: 8, letterSpacing: 1, color: active === id ? GOLD : "#444", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                    {en}
-                  </div>
+        {isMobile && (
+          <nav className="mobile-bottom-nav">
+            {NAV_ITEMS.map(({ id, en }) => (
+              <div key={id} onClick={() => go(id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "2px 4px" }}>
+                <div style={{ width: 3, height: 3, borderRadius: "50%", background: active === id ? GOLD : "#333", transition: "background .3s" }} />
+                <div style={{ fontFamily: "Inter, sans-serif", fontSize: 8, letterSpacing: 1, color: active === id ? GOLD : "#444", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                  {en}
                 </div>
-              ))}
-            </nav>
-          )}
+              </div>
+            ))}
+          </nav>
+        )}
 
-          <div className={isMobile ? "mobile-main" : "desktop-main"}>
+        <div className={isMobile ? "mobile-main" : "desktop-main"}>
             <section id="hero" style={{ position: "relative", minHeight: isMobile ? "100svh" : "92vh", display: "flex", alignItems: "flex-end", overflow: "hidden" }}>
               <img
                 src={HERO_IMG}
